@@ -7,21 +7,16 @@ discovery.relabel "pipeline" {
 
   rule {
     source_labels = ["__meta_docker_container_name"]
-    regex         = "(frontend|backend)"
+    regex         = "/(lab-frontend|lab-backend)"
     target_label  = "tier"
     replacement   = "application"
   }
 
   rule {
     source_labels = ["__meta_docker_container_name"]
-    regex         = "(prometheus|loki|grafana|alloy|cadvisor|node-exporter)"
+    regex         = "/(prometheus|loki|grafana|alloy|cadvisor|node-exporter)"
     target_label  = "tier"
     replacement   = "infrastructure"
-  }
-
-  rule {
-    source_labels = ["__meta_docker_container_name"]
-    target_label  = "container"
   }
 }
 
