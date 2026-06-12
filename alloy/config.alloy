@@ -7,7 +7,7 @@ discovery.relabel "pipeline" {
 
   rule {
     source_labels = ["__meta_docker_container_name"]
-    regex         = "/(lab-frontend|lab-backend)"
+    regex         = "/(backend|frontend)"
     target_label  = "tier"
     replacement   = "application"
   }
