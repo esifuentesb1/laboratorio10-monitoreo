@@ -1,0 +1,41 @@
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "pipeline" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "(frontend|backend)"
+    target_label  = "tier"
+    replacement   = "application"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "(prometheus|loki|grafana|alloy|cadvisor|node-exporter)"
+    target_label  = "tier"
+    replacement   = "infrastructure"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    target_label  = "container"
+  }
+}
+
+local.file_match "docker_logs" {
+  path_targets = discovery.relabel.pipeline.targets
+}
+
+loki.source.file "log_reccolection" {
+  targets    = local.file_match.docker_logs.targets
+  forward_to = [loki.write.local_loki.receiver]
+}
+
+loki.write "local_loki" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

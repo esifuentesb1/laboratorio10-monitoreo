@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoreo UPAO</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; background-color: #fafafa; }
+        button { padding: 12px 20px; font-size: 16px; margin: 10px; cursor: pointer; border-radius: 5px; border: none; color: white; }
+        .btn-trafico { background-color: #28a745; }
+        .btn-carga { background-color: #dc3545; }
+        #status { margin-top: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Hello World - Panel de Control de Tráfico</h1>
+    <p>Usa los botones para interactuar con la API del Backend.</p>
+    
+    <button class="btn-trafico" onclick="enviarPeticion()">Generar Tráfico</button>
+    <button class="btn-carga" onclick="provocarEstrers()">Generar Carga de CPU</button>
+    
+    <div id="status"></div>
+
+    <script>
+        async function enviarPeticion() {
+            document.getElementById('status').innerText = "Enviando... Checkea los logs en Loki.";
+            try {
+                const res = await fetch('http://localhost:3001/api/hello');
+                const data = await res.text();
+                document.getElementById('status').innerText = "Respuesta: " + data;
+            } catch (err) {
+                document.getElementById('status').innerText = "Error de conexión";
+            }
+        }
+
+        async function provocarEstrers() {
+            document.getElementById('status').innerText = "Estresando CPU del Backend (>50%)...";
+            try {
+                fetch('http://localhost:3001/api/load');
+            } catch (err) {}
+        }
+    </script>
+</body>
+</html>
