@@ -21,7 +21,7 @@ discovery.relabel "pipeline" {
 }
 
 local.file_match "docker_logs" {
-  path_targets = discovery.relabel.pipeline.targets
+  path_targets = discovery.relabel.pipeline.output
 }
 
 loki.source.file "log_reccolection" {
